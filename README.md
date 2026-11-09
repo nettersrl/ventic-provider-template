@@ -23,12 +23,11 @@ snapshot o backup. Impostare `VERSION` tramite
 `make version-set VERSION=0.1.0`; per gli aggiornamenti incrementare SemVer.
 I backend/frontend possono avere versioni diverse: il lock descrive la combinazione.
 
-I pin iniziali sono backend `0.1.0` a `baaa37bcb5441c1ea02cacca7a16dfefecee37da`,
-frontend `1.0.0` a `c279098894af5f3826f2c33b4df49faa3f607482`, common `1.0.0`
-a `1df9dd988229c049aec8302f00a1b92fccb2c215`, e bundle frontend storico
-`1.0.10-cli-downloads` con checksum esatto. Le modifiche di questa migrazione
-richiedono commit pubblicati e un nuovo bundle coerente prima di aggiornare i pin;
-non viene dichiarata una release di modifiche ancora non committate.
+Lo stack fissa backend `0.1.0`, frontend `1.0.11` e common `1.0.0`.
+I commit completi, i checksum del bundle frontend e il suo URL immutabile sono
+in `stack.lock.json`. I consumer puntano al common pubblicato; il bundle identifica
+il commit frontend pulito. La CI frontend pubblica il pacchetto dipendenza dopo
+le verifiche: un pacchetto ancora in attesa non viene considerato disponibile.
 
 Completare `config/production.yaml` con domini reali, identità del provider,
 documenti legali approvati, chiave pubblica Licman e CIDR ingress verificati.
@@ -85,8 +84,10 @@ frontend, common and frontend artifact pins live in `stack.lock.json`.
 `make sources-fetch` uses only those commits; `make stack-check` rejects mismatches
 and dirty upstream sources. Update pins from clean, published checkouts using
 `scripts/sources.py pin --backend-dir ... --frontend-dir ...`.
-The initial lock preserves the existing historical bundle; publish the prepared
-stack changes and consistent new bundle before adopting them as new release pins.
+The current lock selects backend 0.1.0, frontend 1.0.11 and common 1.0.0, with
+full published source commits and the clean frontend bundle checksum/immutable URL.
+Frontend CI publishes that dependency package after verification; a pending package
+is not treated as available. The AGENTS.md push procedure updates this full chain.
 
 `make deploy-plan ENVIRONMENT=staging` is offline and lists missing owner inputs.
 Supply real public configuration, approved legal documents, licensing, operators,

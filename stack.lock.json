@@ -5,25 +5,25 @@
       "repository": "https://gitlab.com/nettersrl/ventic/ventic-backend.git",
       "path": ".build/sources/backend",
       "version": "0.1.0",
-      "commit": "baaa37bcb5441c1ea02cacca7a16dfefecee37da"
+      "commit": "587a52548cd0b1503e4161b16a1c921d82905663"
     },
     "frontend": {
       "repository": "https://gitlab.com/nettersrl/ventic/ventic-frontend.git",
       "path": ".build/sources/frontend",
-      "version": "1.0.0",
-      "commit": "c279098894af5f3826f2c33b4df49faa3f607482"
+      "version": "1.0.11",
+      "commit": "d74bb02d8068ce4735c28905a67a6bee3925329b"
     }
   },
   "common": {
     "version": "1.0.0",
-    "commit": "1df9dd988229c049aec8302f00a1b92fccb2c215"
+    "commit": "e6d64b120a06d21c5fcff53f9cd30dfdccfdecc4"
   },
   "frontend_artifact": {
     "format_version": 1,
-    "version": "1.0.10-cli-downloads",
-    "bundle_sha256": "ac77335067247e4900de87c68d4954b2704b7064036ac23ed9a2eed219d03533",
-    "manifest_sha256": "2b764a25a02d92ec8b579cfc43cf36376ec321298c5747c4ea862da9d659bc78",
-    "source_sha256": "906c58b4d730295a6cad34b21dd3b616d4e8b528ba95c149614ea3eb9f332e82",
+    "version": "1.0.11",
+    "bundle_sha256": "5753048141eb7abe81475b4255f56208e5744d2a079cf37cb3f68f53ee4833ea",
+    "manifest_sha256": "f63d8158670db8b5b763a4661733844d1ad0b5fe6e2aa3c58253a01ffb81abdf",
+    "source_sha256": "1581f4ed91a10adc847c37a017574b24ba26498a4bbc5d5f55d80c74e154d36d",
     "contracts": {
       "content_sha256": "9fb6420d358f8e9a2328eea831495fdf1ff87ced1f771eff4681c239a3ff453f",
       "format_version": 1,
@@ -32,6 +32,10 @@
       "version": "1.0.0"
     },
     "images": {},
-    "browser_image": null
+    "browser_image": null,
+    "source_commit": "d74bb02d8068ce4735c28905a67a6bee3925329b",
+    "source_dirty": false,
+    "source_repository": "https://gitlab.com/nettersrl/ventic/ventic-frontend.git",
+    "bundle_url": "https://gitlab.com/api/v4/projects/nettersrl%2Fventic%2Fventic-frontend/packages/generic/ventic-frontend/1.0.11-d74bb02d8068ce4735c28905a67a6bee3925329b/frontend.tar.gz"
   }
 }
