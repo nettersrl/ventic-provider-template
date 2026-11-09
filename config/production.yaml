@@ -1,0 +1,41 @@
+# Public template values. Supply real domains and owner-approved legal URLs.
+installation: contoso
+profile: bundled
+localBuild: false
+localDevelopment:
+  enabled: false
+provider:
+  name: Contoso
+  company: Contoso Ltd
+  support_email: support@contoso.example.invalid
+  logo_url: /brand/contoso.svg
+  logo_light_url: /brand/contoso.svg
+  logo_dark_url: /brand/contoso.svg
+  primary_color: '#2563eb'
+  portal_url: https://portal.contoso.example.invalid
+  api_url: https://api.contoso.example.invalid
+  marketing_url: https://contoso.example.invalid
+  docs_url: https://docs.contoso.example.invalid
+  chat_host: chat.contoso.example.invalid
+  legal_version: OWNER_MUST_SUPPLY
+  terms_url: https://contoso.example.invalid/OWNER_MUST_SUPPLY/terms
+  privacy_url: https://contoso.example.invalid/OWNER_MUST_SUPPLY/privacy
+domains:
+  marketing: contoso.example.invalid
+  portal: portal.contoso.example.invalid
+  api: api.contoso.example.invalid
+  docs: docs.contoso.example.invalid
+  chat: chat.contoso.example.invalid
+  notifications: notifications.contoso.example.invalid
+secrets:
+  openbao:
+    address: https://openbao.contoso-credentials.svc:8200
+    namespace: contoso-credentials
+    role: ventic-runtime-control
+    authMount: kubernetes
+    kvMount: secret
+    caSecret: runtime-openbao-ca
+ingress:
+  trustedProxyCIDRs: []
+license:
+  publicKey: ''

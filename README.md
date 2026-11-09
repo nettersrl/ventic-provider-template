@@ -1,93 +1,103 @@
-# Contoso Template Provider
+# Ventic — Contoso Ltd
 
+## Italiano
 
+Template di installazione per la società fittizia **Contoso Ltd**, usata come
+esempio; non è un'installazione Microsoft e non contiene i suoi marchi o termini.
+Identità, artwork originale, domini, sandbox e destinazioni CI sono di proprietà
+di questo repository. Servizi e frontend arrivano solo dai pin di `stack.lock.json`.
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/nettersrl/ventic/netter-contoso-provider.git
-git branch -M main
-git push -uf origin main
+```sh
+make help
+make version                      # release del provider: 0.1.0
+make deploy-plan ENVIRONMENT=staging  # offline: elenca i prerequisiti mancanti
+make sources-fetch                # clona esclusivamente i commit fissati
+make stack-check
+make test PYTHON=python3          # offline; Python 3.12+ e PyYAML
 ```
 
-## Integrate with your tools
+Per una nuova installazione copiare questo template in un repository distinto,
+scegliere nome/namespace univoci e sostituire Contoso in `config/` e `artwork/`.
+Non copiare mai un provider reale, `.git`, `.build/`, `private/`, credenziali,
+snapshot o backup. Impostare `VERSION` tramite
+`make version-set VERSION=0.1.0`; per gli aggiornamenti incrementare SemVer.
+I backend/frontend possono avere versioni diverse: il lock descrive la combinazione.
 
-* [Set up project integrations](https://gitlab.com/nettersrl/ventic/netter-contoso-provider/-/settings/integrations)
+I pin iniziali sono backend `0.1.0` a `baaa37bcb5441c1ea02cacca7a16dfefecee37da`,
+frontend `1.0.0` a `c279098894af5f3826f2c33b4df49faa3f607482`, common `1.0.0`
+a `1df9dd988229c049aec8302f00a1b92fccb2c215`, e bundle frontend storico
+`1.0.10-cli-downloads` con checksum esatto. Le modifiche di questa migrazione
+richiedono commit pubblicati e un nuovo bundle coerente prima di aggiornare i pin;
+non viene dichiarata una release di modifiche ancora non committate.
 
-## Collaborate with your team
+Completare `config/production.yaml` con domini reali, identità del provider,
+documenti legali approvati, chiave pubblica Licman e CIDR ingress verificati.
+Il prodotto di licenza resta `netter-ai-platform`. Provisionare gli operatori,
+storage, DNS/TLS e OpenBao indicati dalla distribuzione prima dell'installazione.
+Fornire una release backend firmata, le sue immagini accessibili dal cluster e
+input privati separati in `private/<ambiente>/` (0700; file 0600).
+Non generare termini legali tramite sostituzione del nome Contoso.
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+Ogni file in `config/environments/` seleziona valori, contesto, UID del namespace
+`kube-system` e directory privata. Il default `kubernetes` usa direttamente l'API
+HTTPS e kubeconfig, senza host VPS obbligatorio. Per un'API loopback raggiunta via
+SSH usare `transport: ssh-tunnel` e aggiungere:
 
-## Test and Deploy
+```yaml
+sshTunnel:
+  host: contoso-kubernetes  # alias SSH verificato; nessun comando remoto
+  localPort: 16443
+  remotePort: 6443
+```
 
-Use the built-in continuous integration in GitLab.
+Il server del kubeconfig deve coincidere con il tunnel e avere TLS verificato.
+Per ambienti distinti usare cluster/namespace/valori e credenziali distinti.
+Dopo la prima configurazione usare un file `values` diverso per staging/produzione,
+con installazioni e domini separati: il template iniziale lascia intenzionalmente
+entrambi incompleti. `make deploy-release ENVIRONMENT=staging` verifica firma,
+pin, TLS e UID, poi usa Helm con i lease della piattaforma; `deploy-verify` verifica
+il rollout. Non usa gli script storici Netter, non esegue bootstrap del VPS e non
+provisiona credenziali OpenBao o chiavi di firma.
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+La CI verifica Rust nei due modi, contratti, frontend e test della distribuzione.
+I job manuali di deploy sono disponibili solo su tag protetti uguali a `v<VERSION>`;
+sono serializzati per ambiente. Configurare runner protetti e variabili File
+con scope staging/production secondo la
+[guida versioni e CI](../ventic-frontend/docs/versioning.md).
+Il GitLab remoto, i runner, le variabili e i permessi cloud non sono creati dal template.
+Non esistono job che pubblichino `private/` o log come artefatti.
 
-***
+La sandbox `ventic-contoso-local` usa il solo profilo locale, porta 9443,
+`https://portal.contoso.ventic.localhost:9443` e credenziali generate; non usa i
+file privati di produzione. Eseguire i target `sandbox-*` solo dopo aver importato
+il bundle frontend fissato e installato i prerequisiti locali della piattaforma.
 
-# Editing this README
+## English
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+This is a fictional **Contoso Ltd** installation template, with original generic
+artwork and no Microsoft branding, credentials or legal terms. Copy only the
+public template files into a new repository, then choose unique installation,
+namespace, domains, artwork and environment settings. Never copy a live provider's
+private inputs, Git history, build state or backups.
 
-## Suggestions for a good README
+The provider's SemVer `VERSION` identifies its installation release. Exact backend,
+frontend, common and frontend artifact pins live in `stack.lock.json`.
+`make sources-fetch` uses only those commits; `make stack-check` rejects mismatches
+and dirty upstream sources. Update pins from clean, published checkouts using
+`scripts/sources.py pin --backend-dir ... --frontend-dir ...`.
+The initial lock preserves the existing historical bundle; publish the prepared
+stack changes and consistent new bundle before adopting them as new release pins.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+`make deploy-plan ENVIRONMENT=staging` is offline and lists missing owner inputs.
+Supply real public configuration, approved legal documents, licensing, operators,
+DNS/TLS, OpenBao, a signed backend release and environment-specific private files.
+Configure separate values/installations for staging and production. Targets use
+the Kubernetes API and credentials directly, optionally through a verified SSH
+tunnel; they never execute host deployment scripts. Helm retains both platform
+leases, operator schedules and journals.
 
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Protected GitLab tags `v<VERSION>` expose manual, serialized environment deployment
+jobs after verification. Provision protected runners and environment-scoped File
+variables as described in the linked versioning guide. No GitLab remote, runner,
+cloud access or live deployment has been provisioned by this template. Local
+sandbox state and generated credentials remain isolated from production.

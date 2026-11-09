@@ -1,0 +1,37 @@
+{
+  "format_version": 1,
+  "sources": {
+    "backend": {
+      "repository": "https://gitlab.com/nettersrl/ventic/ventic-backend.git",
+      "path": ".build/sources/backend",
+      "version": "0.1.0",
+      "commit": "baaa37bcb5441c1ea02cacca7a16dfefecee37da"
+    },
+    "frontend": {
+      "repository": "https://gitlab.com/nettersrl/ventic/ventic-frontend.git",
+      "path": ".build/sources/frontend",
+      "version": "1.0.0",
+      "commit": "c279098894af5f3826f2c33b4df49faa3f607482"
+    }
+  },
+  "common": {
+    "version": "1.0.0",
+    "commit": "1df9dd988229c049aec8302f00a1b92fccb2c215"
+  },
+  "frontend_artifact": {
+    "format_version": 1,
+    "version": "1.0.10-cli-downloads",
+    "bundle_sha256": "ac77335067247e4900de87c68d4954b2704b7064036ac23ed9a2eed219d03533",
+    "manifest_sha256": "2b764a25a02d92ec8b579cfc43cf36376ec321298c5747c4ea862da9d659bc78",
+    "source_sha256": "906c58b4d730295a6cad34b21dd3b616d4e8b528ba95c149614ea3eb9f332e82",
+    "contracts": {
+      "content_sha256": "9fb6420d358f8e9a2328eea831495fdf1ff87ced1f771eff4681c239a3ff453f",
+      "format_version": 1,
+      "manifest_sha256": "9a596579654f1332ce20c9be67b305e3c30691a2ac3d4645c58c99d0a4eaa28e",
+      "source_commit": "c673823ae7b470282a167bbf8a5061dd81ec04e6",
+      "version": "1.0.0"
+    },
+    "images": {},
+    "browser_image": null
+  }
+}

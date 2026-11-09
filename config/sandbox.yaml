@@ -1,0 +1,13 @@
+cluster: ventic-contoso-local
+domain: contoso.ventic.localhost
+httpsPort: 9443
+state: ../.build/sandbox
+brandAssets: ../artwork/portal
+provider:
+  name: Contoso — sandbox
+  company: Contoso Ltd (ambiente locale / local sandbox)
+  support_email: developer@localhost
+  logo_url: /brand/contoso.svg
+  logo_light_url: /brand/contoso.svg
+  logo_dark_url: /brand/contoso.svg
+  primary_color: '#2563eb'

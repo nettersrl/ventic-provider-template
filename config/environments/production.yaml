@@ -1,0 +1,5 @@
+transport: kubernetes
+context: REPLACE_WITH_PRODUCTION_CONTEXT
+clusterUID: REPLACE_WITH_INSPECTED_KUBE_SYSTEM_UID
+values: config/production.yaml
+privateDirectory: private/production

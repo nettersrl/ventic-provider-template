@@ -1,0 +1,15 @@
+private/
+.build/
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+.env.*
+*.key
+*.pem
+*.token
+charts/*/charts/
+node_modules/
+dist/
+*.log
