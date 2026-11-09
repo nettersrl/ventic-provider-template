@@ -1,12 +1,11 @@
-> **Repository trasferito / Repository moved**
->
-> Il template attivo è ora [nettersrl/ventic-provider-template](https://github.com/nettersrl/ventic-provider-template).
-> Usare quel repository per fork, clone e contributi. Questo checkout GitLab conserva lo storico.
->
-> The active template is now [nettersrl/ventic-provider-template](https://github.com/nettersrl/ventic-provider-template).
-> Use GitHub for forks, clones and contributions. This GitLab checkout retains migration history.
+# Ventic Provider Template — Contoso Ltd
 
-# Ventic — Contoso Ltd
+Repository: [nettersrl/ventic-provider-template](https://github.com/nettersrl/ventic-provider-template).
+
+```sh
+git clone git@github.com:nettersrl/ventic-provider-template.git
+cd ventic-provider-template
+```
 
 ## Italiano
 
@@ -24,7 +23,7 @@ make stack-check
 make test PYTHON=python3          # offline; Python 3.12+ e PyYAML
 ```
 
-Per una nuova installazione copiare questo template in un repository distinto,
+Per una nuova installazione creare un fork GitHub o usare questo template in un repository distinto,
 scegliere nome/namespace univoci e sostituire Contoso in `config/` e `artwork/`.
 Non copiare mai un provider reale, `.git`, `.build/`, `private/`, credenziali,
 snapshot o backup. Impostare `VERSION` tramite
@@ -66,13 +65,17 @@ pin, TLS e UID, poi usa Helm con i lease della piattaforma; `deploy-verify` veri
 il rollout. Non usa gli script storici Netter, non esegue bootstrap del VPS e non
 provisiona credenziali OpenBao o chiavi di firma.
 
-La CI verifica Rust nei due modi, contratti, frontend e test della distribuzione.
-I job manuali di deploy sono disponibili solo su tag protetti uguali a `v<VERSION>`;
-sono serializzati per ambiente. Configurare runner protetti e variabili File
-con scope staging/production secondo la
-[guida versioni e CI](../ventic-frontend/docs/versioning.md).
-Il GitLab remoto, i runner, le variabili e i permessi cloud non sono creati dal template.
-Non esistono job che pubblichino `private/` o log come artefatti.
+GitHub Actions esegue i test offline del template e verifica i piani incompleti
+senza credenziali, accesso al cluster o checkout dei sorgenti privati della
+piattaforma. Il deploy rimane esplicito tramite i comandi Makefile, dopo aver
+fornito gli input dell'ambiente. Il workflow non carica `private/`, log o cache
+come artefatti e non esegue deploy da pull request.
+
+Per sviluppo da sorgente, backend/frontend e il pacchetto dipendenza restano nei
+repository GitLab fissati in `stack.lock.json`: l'accesso a quei repository è
+separato dal fork GitHub. La `.gitlab-ci.yml` e gli helper GitLab sono conservati
+come compatibilità opzionale per mirror GitLab; non sono il workflow GitHub e
+richiedono runner, variabili File e tag protetti configurati dal proprietario.
 
 La sandbox `ventic-contoso-local` usa il solo profilo locale, porta 9443,
 `https://portal.contoso.ventic.localhost:9443` e credenziali generate; non usa i
@@ -82,8 +85,7 @@ il bundle frontend fissato e installato i prerequisiti locali della piattaforma.
 ## English
 
 This is a fictional **Contoso Ltd** installation template, with original generic
-artwork and no Microsoft branding, credentials or legal terms. Copy only the
-public template files into a new repository, then choose unique installation,
+artwork and no Microsoft branding, credentials or legal terms. Fork or use the GitHub template in a new repository, keeping only public template files, then choose unique installation,
 namespace, domains, artwork and environment settings. Never copy a live provider's
 private inputs, Git history, build state or backups.
 
@@ -105,11 +107,15 @@ the Kubernetes API and credentials directly, optionally through a verified SSH
 tunnel; they never execute host deployment scripts. Helm retains both platform
 leases, operator schedules and journals.
 
-Protected GitLab tags `v<VERSION>` expose manual, serialized environment deployment
-jobs after verification. Provision protected runners and environment-scoped File
-variables as described in the linked versioning guide. No GitLab remote, runner,
-cloud access or live deployment has been provisioned by this template. Local
-sandbox state and generated credentials remain isolated from production.
+GitHub Actions runs the template unit tests and offline deployment plans without
+cluster credentials or private platform checkouts. Deployment remains an explicit
+Makefile operation with owner-supplied inputs; pull requests cannot deploy.
+The workflow uploads no private inputs, logs or caches. Pinned backend/frontend
+sources still live on GitLab and require separate access for source development.
+The retained GitLab pipeline/helpers are optional mirror compatibility only and
+need separately configured protected runners/tags and File variables. No cloud
+access or live deployment is provisioned by the GitHub workflow. Local sandbox
+state and generated credentials remain isolated from production.
 
 
 Backup e recupero / Backup and recovery: `make backup-init`, `backup-full`,
