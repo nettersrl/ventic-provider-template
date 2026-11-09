@@ -30,7 +30,7 @@ snapshot o backup. Impostare `VERSION` tramite
 `make version-set VERSION=0.1.0`; per gli aggiornamenti incrementare SemVer.
 I backend/frontend possono avere versioni diverse: il lock descrive la combinazione.
 
-Lo stack fissa backend `0.1.0`, frontend `1.1.1` e common `1.0.0`.
+Lo stack fissa backend `0.1.0`, frontend `1.1.2` e common `1.0.0`.
 I commit completi, i checksum del bundle frontend e il suo URL immutabile sono
 in `stack.lock.json`. I consumer puntano al common pubblicato; il bundle identifica
 il commit frontend pulito. La CI frontend pubblica il pacchetto dipendenza dopo
@@ -94,7 +94,7 @@ frontend, common and frontend artifact pins live in `stack.lock.json`.
 `make sources-fetch` uses only those commits; `make stack-check` rejects mismatches
 and dirty upstream sources. Update pins from clean, published checkouts using
 `scripts/sources.py pin --backend-dir ... --frontend-dir ...`.
-The current lock selects backend 0.1.0, frontend 1.1.1 and common 1.0.0, with
+The current lock selects backend 0.1.0, frontend 1.1.2 and common 1.0.0, with
 full published source commits and the clean frontend bundle checksum/immutable URL.
 Frontend CI publishes that dependency package after verification; a pending package
 is not treated as available. The AGENTS.md push procedure updates this full chain.
