@@ -1,3 +1,11 @@
+> **Repository trasferito / Repository moved**
+>
+> Il template attivo è ora [nettersrl/ventic-provider-template](https://github.com/nettersrl/ventic-provider-template).
+> Usare quel repository per fork, clone e contributi. Questo checkout GitLab conserva lo storico.
+>
+> The active template is now [nettersrl/ventic-provider-template](https://github.com/nettersrl/ventic-provider-template).
+> Use GitHub for forks, clones and contributions. This GitLab checkout retains migration history.
+
 # Ventic — Contoso Ltd
 
 ## Italiano
