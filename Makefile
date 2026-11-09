@@ -1,4 +1,5 @@
 VENTIC = $(shell python3 scripts/sources.py backend)
+BINARY_VENTIC = $(shell python3 scripts/binary-release.py path)
 PYTHON ?= $(VENTIC)/.venv/bin/python
 ENVIRONMENT ?= staging
 FRONTEND ?= portal
@@ -9,10 +10,16 @@ SANDBOX_PROFILE := $(CURDIR)/config/sandbox.yaml
 
 .PHONY: help sources-fetch stack-check test deploy-plan deploy-release deploy-verify version version-set setup sandbox-up sandbox-status sandbox-verify sandbox-down sandbox-destroy sandbox-sync sandbox-reset sandbox-dev sandbox-backend sandbox-trust
 help:
+	@printf '%s\n' 'Binary installation: python3 -m pip install -r requirements-installer.txt; make release-fetch | release-check | deploy-plan | deploy-release'
 	@printf '%s\n' 'make backup-init | backup-full | backup-incremental | backup-list | backup-verify | restore-plan [ARGS=--include-s3]'
 	@printf '%s\n' 'make sources-fetch | stack-check | test' 'make deploy-plan ENVIRONMENT=staging' 'make deploy-release ENVIRONMENT=staging (signed, licensed release)' 'make version | version-set VERSION=MAJOR.MINOR.PATCH' 'make sandbox-up | sandbox-dev | sandbox-down'
 sources-fetch:
 	python3 scripts/sources.py fetch
+.PHONY: release-fetch release-check
+release-fetch:
+	python3 scripts/binary-release.py fetch
+release-check:
+	python3 scripts/binary-release.py verify
 stack-check:
 	python3 scripts/sources.py check
 test:
@@ -20,9 +27,9 @@ test:
 deploy-plan:
 	python3 scripts/deploy.py plan --environment "$(ENVIRONMENT)"
 deploy-release:
-	$(PYTHON) scripts/deploy.py deploy --environment "$(ENVIRONMENT)"
+	python3 scripts/deploy.py deploy --environment "$(ENVIRONMENT)"
 deploy-verify:
-	$(PYTHON) scripts/deploy.py verify --environment "$(ENVIRONMENT)"
+	python3 scripts/deploy.py verify --environment "$(ENVIRONMENT)"
 setup:
 	$(MAKE) -C "$(VENTIC)" local-setup
 version:

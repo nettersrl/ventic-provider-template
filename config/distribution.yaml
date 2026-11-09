@@ -1,0 +1,6 @@
+# This version identifies the complete signed backend/frontend/runtime set.
+version: 0.1.0
+origin: https://ventic-public-release-artifacts.s3.fra.databucket.eu
+# Obtain through an independent trusted owner channel; never trust a key downloaded
+# beside the release. This file is intentionally absent from the template.
+publicKeyFile: private/release.pub

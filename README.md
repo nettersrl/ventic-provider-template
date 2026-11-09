@@ -23,7 +23,7 @@ snapshot o backup. Impostare `VERSION` tramite
 `make version-set VERSION=0.1.0`; per gli aggiornamenti incrementare SemVer.
 I backend/frontend possono avere versioni diverse: il lock descrive la combinazione.
 
-Lo stack fissa backend `0.1.0`, frontend `1.0.11` e common `1.0.0`.
+Lo stack fissa backend `0.1.0`, frontend `1.1.1` e common `1.0.0`.
 I commit completi, i checksum del bundle frontend e il suo URL immutabile sono
 in `stack.lock.json`. I consumer puntano al common pubblicato; il bundle identifica
 il commit frontend pulito. La CI frontend pubblica il pacchetto dipendenza dopo
@@ -84,7 +84,7 @@ frontend, common and frontend artifact pins live in `stack.lock.json`.
 `make sources-fetch` uses only those commits; `make stack-check` rejects mismatches
 and dirty upstream sources. Update pins from clean, published checkouts using
 `scripts/sources.py pin --backend-dir ... --frontend-dir ...`.
-The current lock selects backend 0.1.0, frontend 1.0.11 and common 1.0.0, with
+The current lock selects backend 0.1.0, frontend 1.1.1 and common 1.0.0, with
 full published source commits and the clean frontend bundle checksum/immutable URL.
 Frontend CI publishes that dependency package after verification; a pending package
 is not treated as available. The AGENTS.md push procedure updates this full chain.
@@ -115,3 +115,19 @@ backs up another installation implicitly. Incrementals deduplicate complete sour
 snapshots; physical database/WAL backups remain complementary.
 See the Ventic frontend guide `docs/provider-settings-and-recovery.md` for custody,
 configuration migration, exact backup coverage and verification limitations.
+
+
+## Installazione binaria / Binary installation
+
+Per i clienti usare la [guida completa IT/EN](https://gitlab.com/nettersrl/ventic/ventic-frontend/-/blob/main/apps/docs/content/provider/redistribuzione.md).
+Impostare `config/distribution.yaml`, ottenere la chiave pubblica release da un
+canale fidato e salvarla in `private/release.pub`. Eseguire `python3 -m pip install
+-r requirements-installer.txt`, `make release-fetch`, `make release-check`, quindi
+completare il piano/deploy dell'ambiente con `distribution: true`.
+Questo percorso verifica e usa immagini/installer compilati; non clona o compila
+backend/frontend. `stack.lock.json` e `sources-fetch` restano per sviluppo.
+
+English: configure the signed release version/origin, independently pin the release
+public key, install the Python installer dependencies, and run `release-fetch` /
+`release-check` before environment deployment. Binary installations do not require
+platform sources or compilers. A template version is not evidence of publication.

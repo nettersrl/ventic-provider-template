@@ -17,6 +17,16 @@ import ci
 
 
 class ProviderTests(unittest.TestCase):
+    def test_domain_override_ignores_unused_template_hosts_in_offline_plan(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            values=root/'values.yaml'
+            values.write_text('domain: demo.example.org\nprovider:\n  portal_url: https://portal.contoso.example.invalid\n  support_email: support@example.org\ndomains:\n  api: api.contoso.example.invalid\nlicense:\n  publicKey: trusted\ningress:\n  trustedProxyCIDRs: [192.0.2.0/24]\n')
+            settings={'values':'values.yaml','privateDirectory':'private','context':'explicit','clusterUID':'owned','distribution':True}
+            with patch.object(deploy,'inside',side_effect=lambda value:root/value):
+                status=deploy.plan(settings)
+            self.assertNotIn('real domains, provider identity and owner-approved legal documents',status['missing'])
+
     def test_template_plan_is_offline_and_incomplete(self):
         with patch.object(subprocess,'run',side_effect=AssertionError('No external commands')):
             plan=deploy.plan(deploy.target('staging'))

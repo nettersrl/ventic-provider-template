@@ -3,6 +3,7 @@
 import argparse
 from contextlib import nullcontext
 import json
+import runpy
 import os
 from pathlib import Path
 import subprocess
@@ -33,34 +34,47 @@ def plan(settings):
     missing = []
     for key in ('context', 'clusterUID'):
         if not settings.get(key) or settings[key].startswith('REPLACE_'): missing.append(key)
-    if '.example.invalid' in json.dumps(values) or 'OWNER_MUST_SUPPLY' in json.dumps(values):
+    # With `domain`, the verified platform installer derives these hosts/origins.
+    # Do not reject the template's unused derived fields before that step.
+    public_inputs=json.loads(json.dumps(values))
+    if public_inputs.get('domain'):
+        public_inputs.pop('domains',None)
+        for key in ('portal_url','api_url','marketing_url','docs_url','chat_host'):
+            public_inputs.get('provider',{}).pop(key,None)
+    if '.example.invalid' in json.dumps(public_inputs) or 'OWNER_MUST_SUPPLY' in json.dumps(public_inputs):
         missing.append('real domains, provider identity and owner-approved legal documents')
     if not values.get('license', {}).get('publicKey'): missing.append('Licman public key')
     if not values.get('ingress', {}).get('trustedProxyCIDRs'): missing.append('inspected ingress proxy CIDRs')
-    for name in ('kubeconfig', 'release.json', 'release.pub', 'openbao-runtime.json'):
+    for name in (('kubeconfig', 'openbao-runtime.json') if settings.get('distribution') else ('kubeconfig', 'release.json', 'release.pub', 'openbao-runtime.json')):
         if not (private / name).is_file(): missing.append('private input: ' + name)
     return {'ready': not missing, 'missing': missing, 'cluster_modified': False,
-            'provider_version': (ROOT / 'VERSION').read_text().strip(), 'stack': lock()}
+            'provider_version': (ROOT / 'VERSION').read_text().strip(), 'stack': {'binary': True} if settings.get('distribution') else lock()}
 
 
 def execute(action, settings):
     status = plan(settings)
     if not status['ready']: raise ValueError('Complete the deployment plan prerequisites')
-    pins = check()
-    backend = source_path('backend')
+    if settings.get('distribution', False):
+        binary = runpy.run_path(str(ROOT / 'scripts/binary-release.py'))
+        backend = binary['verify']()
+        pins = None
+    else:
+        pins = check()
+        backend = source_path('backend')
     sys.path.insert(0, str(backend / 'scripts'))
     import ship
     from deploy_support import tunnel
     from release import verify
     private = inside(settings['privateDirectory'])
-    envelope = json.loads(ship.private_file(private / 'release.json').read_text())
-    manifest = verify(envelope, ship.private_file(private / 'release.pub').read_text().strip())
-    if manifest['version'] != pins['sources']['backend']['version'] or manifest.get('frontend') != pins['frontend_artifact']:
+    manifest_file = backend / 'release.json' if pins is None else private / 'release.json'
+    envelope = json.loads(manifest_file.read_text())
+    manifest = verify(envelope, (ROOT / runpy.run_path(str(ROOT / 'scripts/binary-release.py'))['settings']()['publicKeyFile']).read_text().strip() if pins is None else ship.private_file(private / 'release.pub').read_text().strip())
+    if pins is not None and (manifest['version'] != pins['sources']['backend']['version'] or manifest.get('frontend') != pins['frontend_artifact']):
         raise ValueError('Signed release differs from the provider stack lock')
     common = [sys.executable, str(backend / 'scripts/ship.py'), 'vps',
               '--context', settings['context'], '--cluster-uid', settings['clusterUID'],
               '--kubeconfig', str(private / 'kubeconfig'), '--values', str(inside(settings['values'])),
-              '--release-manifest', str(private / 'release.json'), '--release-public-key-file', str(private / 'release.pub'),
+              '--release-manifest', str(manifest_file), '--release-public-key-file', str(ROOT / runpy.run_path(str(ROOT / 'scripts/binary-release.py'))['settings']()['publicKeyFile']) if pins is None else str(private / 'release.pub'),
               '--brand-assets-dir', str(ROOT / 'artwork/portal'), '--openbao-config-file', str(private / 'openbao-runtime.json')]
     if action == 'deploy':
         common.append('--apply')
@@ -78,7 +92,7 @@ def execute(action, settings):
             result = subprocess.run(['kubectl', '--context', settings['context'], 'get', 'namespace', 'kube-system', '-o', 'json'], env=env, capture_output=True, text=True)
             if result.returncode or json.loads(result.stdout)['metadata']['uid'] != settings['clusterUID']:
                 raise ValueError('Target cluster UID differs')
-            command = [sys.executable, str(backend / 'scripts/providerctl.py'), 'verify', '--context', settings['context'], '--values', str(inside(settings['values'])), '--release-manifest', str(private / 'release.json'), '--release-public-key-file', str(private / 'release.pub')]
+            command = [sys.executable, str(backend / 'scripts/providerctl.py'), 'verify', '--context', settings['context'], '--values', str(inside(settings['values'])), '--release-manifest', str(manifest_file), '--release-public-key-file', str(ROOT / runpy.run_path(str(ROOT / 'scripts/binary-release.py'))['settings']()['publicKeyFile']) if pins is None else str(private / 'release.pub')]
             result = subprocess.run(command, env=env, cwd=backend, capture_output=True, text=True)
             if result.returncode: raise ValueError('Rollout verification failed; private output suppressed')
     print('Signed deployment/rollout checks passed. Browser, live payment and inference checks were not run.')

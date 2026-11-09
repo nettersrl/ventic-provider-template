@@ -5,13 +5,13 @@
       "repository": "https://gitlab.com/nettersrl/ventic/ventic-backend.git",
       "path": ".build/sources/backend",
       "version": "0.1.0",
-      "commit": "4bb49180226900c9391ea9156a949158b7ac7764"
+      "commit": "a12df911015d89c39db1b383967a85dd6c58af80"
     },
     "frontend": {
       "repository": "https://gitlab.com/nettersrl/ventic/ventic-frontend.git",
       "path": ".build/sources/frontend",
-      "version": "1.1.0",
-      "commit": "199419de5c642075acdbe46b5a519372c4e40de9"
+      "version": "1.1.1",
+      "commit": "d23bbee2d80ed8786ae514446d589f0baac9dd55"
     }
   },
   "common": {
@@ -20,10 +20,10 @@
   },
   "frontend_artifact": {
     "format_version": 1,
-    "version": "1.1.0",
-    "bundle_sha256": "710e0364f6b4cc76552b9e55aff85399c8b5dc2778e728df03c818f73402bc91",
-    "manifest_sha256": "6cea11eaa69200496a4082815c05c32e52d52a8bcd68bbb04e7016f81c409c1a",
-    "source_sha256": "38002149eb1a58fdb1afda4058ed0dcbb41e5aed8aaec02b38e0dcdf4286ff7f",
+    "version": "1.1.1",
+    "bundle_sha256": "3bdbeb7c268a58b6124ba849ad2dca75b66aa17986a5b09305db2a6ffaaefc5b",
+    "manifest_sha256": "41544d80ce2603b520d040d95055d0d755941ed2082cc166a71dec606a733c4e",
+    "source_sha256": "92beac154b755b763b62aabd68c08df25a06ac1c46571201496b2343a1933112",
     "contracts": {
       "content_sha256": "968dbc6db5adaff50f36087242d71e7b6d40f56a344ee30b347e92460b4a9836",
       "format_version": 1,
@@ -33,9 +33,9 @@
     },
     "images": {},
     "browser_image": null,
-    "source_commit": "199419de5c642075acdbe46b5a519372c4e40de9",
+    "source_commit": "d23bbee2d80ed8786ae514446d589f0baac9dd55",
     "source_dirty": false,
     "source_repository": "https://gitlab.com/nettersrl/ventic/ventic-frontend.git",
-    "bundle_url": "https://gitlab.com/api/v4/projects/nettersrl%2Fventic%2Fventic-frontend/packages/generic/ventic-frontend/1.1.0-199419de5c642075acdbe46b5a519372c4e40de9/frontend.tar.gz"
+    "bundle_url": "https://gitlab.com/api/v4/projects/nettersrl%2Fventic%2Fventic-frontend/packages/generic/ventic-frontend/1.1.1-d23bbee2d80ed8786ae514446d589f0baac9dd55/frontend.tar.gz"
   }
 }

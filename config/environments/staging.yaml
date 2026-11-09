@@ -3,3 +3,6 @@ context: REPLACE_WITH_STAGING_CONTEXT
 clusterUID: REPLACE_WITH_INSPECTED_KUBE_SYSTEM_UID
 values: config/production.yaml
 privateDirectory: private/staging
+
+# Use signed compiled releases for customer installation; sources are development-only.
+distribution: true
