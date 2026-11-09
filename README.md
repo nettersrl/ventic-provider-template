@@ -102,3 +102,16 @@ jobs after verification. Provision protected runners and environment-scoped File
 variables as described in the linked versioning guide. No GitLab remote, runner,
 cloud access or live deployment has been provisioned by this template. Local
 sandbox state and generated credentials remain isolated from production.
+
+
+Backup e recupero / Backup and recovery: `make backup-init`, `backup-full`,
+`backup-incremental`, `backup-list`, `backup-verify`, `restore-plan`.
+Copy `config/backup.example.json` to ignored `private/backup.json` and complete
+its explicit cluster identity, off-host HTTPS repository and private references.
+OpenBao recovery material and backup keys remain in `private/` (0700/0600), never
+in Git or published artifacts. S3 contents are optional with `ARGS=--include-s3`.
+The workflow pauses installation writers for a consistent checkpoint; it never
+backs up another installation implicitly. Incrementals deduplicate complete source
+snapshots; physical database/WAL backups remain complementary.
+See the Ventic frontend guide `docs/provider-settings-and-recovery.md` for custody,
+configuration migration, exact backup coverage and verification limitations.

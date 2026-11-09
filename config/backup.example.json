@@ -1,0 +1,18 @@
+{
+  "installation": "contoso",
+  "context": "REPLACE_WITH_EXPLICIT_CONTEXT",
+  "clusterUID": "REPLACE_WITH_INSPECTED_CLUSTER_UID",
+  "kubeconfig": "kubeconfig",
+  "repository": "s3:https://backup.example.invalid/provider-backups",
+  "passwordFile": "backup/repository.password",
+  "credentialsFile": "backup/storage-credentials.json",
+  "openbaoConfig": "openbao/backup-reader.json",
+  "recoveryDirectory": "openbao",
+  "runtimeSecret": "ventic-runtime",
+  "snapshotImage": "REPLACE_WITH_RELEASE_OPERATOR_IMAGE@sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "postgresImage": "REPLACE_WITH_POSTGRES_CLIENT_IMAGE@sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "objectSources": [],
+  "openbaoNamespace": "contoso-credentials",
+  "databaseHost": "postgres-rw.contoso-data.svc",
+  "databasePort": 5432
+}
