@@ -9,5 +9,5 @@ provider:
   support_email: developer@localhost
   logo_url: /brand/contoso.svg
   logo_light_url: /brand/contoso.svg
-  logo_dark_url: /brand/contoso.svg
+  logo_dark_url: /brand/contoso-dark.svg
   primary_color: '#2563eb'

@@ -10,7 +10,7 @@ provider:
   support_email: support@contoso.example.invalid
   logo_url: /brand/contoso.svg
   logo_light_url: /brand/contoso.svg
-  logo_dark_url: /brand/contoso.svg
+  logo_dark_url: /brand/contoso-dark.svg
   primary_color: '#2563eb'
   portal_url: https://portal.contoso.example.invalid
   api_url: https://api.contoso.example.invalid
@@ -39,3 +39,11 @@ ingress:
   trustedProxyCIDRs: []
 license:
   publicKey: ''
+settings:
+  SMTP_HOST: ''
+  SMTP_PORT: '587'
+  SMTP_FROM: ''
+  SMTP_USER: ''
+  S3_BUCKET: ''
+  S3_REGION: ''
+  S3_ENDPOINT: ''

@@ -45,22 +45,30 @@ def plan(settings):
         missing.append('real domains, provider identity and owner-approved legal documents')
     if not values.get('license', {}).get('publicKey'): missing.append('Licman public key')
     if not values.get('ingress', {}).get('trustedProxyCIDRs'): missing.append('inspected ingress proxy CIDRs')
+    for key in ('SMTP_HOST', 'SMTP_PORT', 'SMTP_FROM', 'SMTP_USER', 'S3_BUCKET', 'S3_REGION'):
+        if not values.get('settings', {}).get(key): missing.append('public setting: ' + key)
     for name in (('kubeconfig', 'openbao-runtime.json') if settings.get('distribution') else ('kubeconfig', 'release.json', 'release.pub', 'openbao-runtime.json')):
         if not (private / name).is_file(): missing.append('private input: ' + name)
+    if settings.get('distribution'):
+        binary = runpy.run_path(str(ROOT / 'scripts/binary-release.py'))
+        trust = inside(binary['settings']()['publicKeyFile'])
+        if not trust.is_file(): missing.append('independently trusted release public key')
     return {'ready': not missing, 'missing': missing, 'cluster_modified': False,
             'provider_version': (ROOT / 'VERSION').read_text().strip(), 'stack': {'binary': True} if settings.get('distribution') else lock()}
+
+
+def backend_path(settings):
+    if settings.get('distribution', False):
+        return runpy.run_path(str(ROOT / 'scripts/binary-release.py'))['verify']()
+    check()
+    return source_path('backend')
 
 
 def execute(action, settings):
     status = plan(settings)
     if not status['ready']: raise ValueError('Complete the deployment plan prerequisites')
-    if settings.get('distribution', False):
-        binary = runpy.run_path(str(ROOT / 'scripts/binary-release.py'))
-        backend = binary['verify']()
-        pins = None
-    else:
-        pins = check()
-        backend = source_path('backend')
+    backend = backend_path(settings)
+    pins = None if settings.get('distribution', False) else lock()
     sys.path.insert(0, str(backend / 'scripts'))
     import ship
     from deploy_support import tunnel
@@ -100,12 +108,13 @@ def execute(action, settings):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
-    parser.add_argument('action', choices=['plan', 'deploy', 'verify'])
+    parser.add_argument('action', choices=['plan', 'deploy', 'verify', 'private-directory'])
     parser.add_argument('--environment', choices=['staging', 'production'], default='staging')
     args = parser.parse_args()
     os.umask(0o077)
     settings = target(args.environment)
-    if args.action == 'plan': print(json.dumps(plan(settings), indent=2))
+    if args.action == 'private-directory': print(inside(settings['privateDirectory']))
+    elif args.action == 'plan': print(json.dumps(plan(settings), indent=2))
     else: execute(args.action, settings)
 
 

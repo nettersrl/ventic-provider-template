@@ -14,6 +14,7 @@ sys.path.insert(0,str(ROOT/'scripts'))
 import sources
 import deploy
 import ci
+import initialize
 
 
 class ProviderTests(unittest.TestCase):
@@ -52,7 +53,36 @@ class ProviderTests(unittest.TestCase):
             self.assertRegex(value['commit'],r'^[a-f0-9]{40}$')
             self.assertNotIn('@',value['repository'])
         self.assertEqual(len(data['frontend_artifact']['bundle_sha256']),64)
-        self.assertFalse((ROOT/'private').exists())
+        self.assertIn('private/',(ROOT/'.gitignore').read_text().splitlines())
+
+    def test_initialization_preserves_inputs_and_creates_private_directories(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);private=root/'private/production'
+            initialize.prepare(root,private)
+            secret=private/'kubeconfig';secret.write_text('synthetic-retained-input');secret.chmod(0o600)
+            initialize.prepare(root,private)
+            self.assertEqual(secret.read_text(),'synthetic-retained-input')
+            for path in [root/'.build',root/'private',private]:self.assertEqual(path.stat().st_mode & 0o777,0o700)
+            self.assertFalse((private/'license.key').exists())
+
+    def test_initialization_refuses_path_escape_and_symlinked_private_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)/'provider';root.mkdir();outside=Path(tmp)/'outside';outside.mkdir()
+            with self.assertRaises(ValueError):initialize.prepare(root,outside)
+            (root/'private').symlink_to(outside,target_is_directory=True)
+            with self.assertRaises(ValueError):initialize.prepare(root,root/'private/production')
+            self.assertEqual(list(outside.iterdir()),[])
+
+    def test_public_runtime_settings_are_explicit_plan_prerequisites(self):
+        status=deploy.plan(deploy.target('production'))
+        for key in ['SMTP_HOST','SMTP_FROM','SMTP_USER','S3_BUCKET','S3_REGION']:
+            self.assertIn('public setting: '+key,status['missing'])
+
+    def test_binary_tools_never_fall_back_to_source_checkouts(self):
+        with patch.object(deploy.runpy,'run_path',return_value={'verify':lambda:Path('/signed/installer')}), \
+             patch.object(deploy,'check',side_effect=AssertionError('No source checks')), \
+             patch.object(deploy,'source_path',side_effect=AssertionError('No source checkout')):
+            self.assertEqual(deploy.backend_path({'distribution':True}),Path('/signed/installer'))
 
     def test_refuse_dirty_and_wrong_commit_before_consuming_sources(self):
         pins=sources.lock()

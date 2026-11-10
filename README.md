@@ -7,6 +7,19 @@ git clone git@github.com:nettersrl/ventic-provider-template.git
 cd ventic-provider-template
 ```
 
+Per generare un checkout separato dai soli file pubblici / To generate a separate
+provider from public template files only, from the template checkout:
+
+```sh
+python3 create-provider.py --abbr demo --parent /path/to/providers
+cd /path/to/providers/ventic-demo-provider
+make init ENVIRONMENT=staging
+```
+
+Il generatore non copia `.git`, segreti, cache o backup e rifiuta destinazioni
+esistenti. / The generator never copies Git history, secrets, caches or backups,
+and refuses to overwrite an existing provider.
+
 ## Italiano
 
 Template di installazione per la società fittizia **Contoso Ltd**, usata come
@@ -16,6 +29,7 @@ di questo repository. Servizi e frontend arrivano solo dai pin di `stack.lock.js
 
 ```sh
 make help
+make init ENVIRONMENT=staging      # dipendenze locali e directory private; non modifica il cluster
 make version                      # release del provider: 0.1.0
 make deploy-plan ENVIRONMENT=staging  # offline: elenca i prerequisiti mancanti
 make sources-fetch                # clona esclusivamente i commit fissati
@@ -30,7 +44,7 @@ snapshot o backup. Impostare `VERSION` tramite
 `make version-set VERSION=0.1.0`; per gli aggiornamenti incrementare SemVer.
 I backend/frontend possono avere versioni diverse: il lock descrive la combinazione.
 
-Lo stack fissa backend `0.1.0`, frontend `1.1.2` e common `1.0.0`.
+Lo stack fissa backend `0.1.0`, frontend `1.1.3` e common `1.0.0`.
 I commit completi, i checksum del bundle frontend e il suo URL immutabile sono
 in `stack.lock.json`. I consumer puntano al common pubblicato; il bundle identifica
 il commit frontend pulito. La CI frontend pubblica il pacchetto dipendenza dopo
@@ -43,6 +57,15 @@ storage, DNS/TLS e OpenBao indicati dalla distribuzione prima dell'installazione
 Fornire una release backend firmata, le sue immagini accessibili dal cluster e
 input privati separati in `private/<ambiente>/` (0700; file 0600).
 Non generare termini legali tramite sostituzione del nome Contoso.
+Compilare anche `settings.SMTP_HOST/PORT/FROM/USER` e `settings.S3_BUCKET/REGION`
+con i valori pubblici effettivi; password e chiavi rimangono in OpenBao.
+Il piano elenca questi prerequisiti prima di qualsiasi modifica al cluster.
+
+`make init` crea la venv installer e le directory private dell'ambiente, senza
+sovrascrivere input esistenti, generare licenze/chiavi fidate o eseguire deploy.
+Poi completare il piano, ottenere la release firmata (`make release-fetch`) e
+usare `make deploy-release ENVIRONMENT=...`. I backup seguono lo stesso ambiente
+e lo stesso installer binario verificato; non richiedono checkout dei sorgenti.
 
 Ogni file in `config/environments/` seleziona valori, contesto, UID del namespace
 `kube-system` e directory privata. Il default `kubernetes` usa direttamente l'API
@@ -100,6 +123,13 @@ Frontend CI publishes that dependency package after verification; a pending pack
 is not treated as available. The AGENTS.md push procedure updates this full chain.
 
 `make deploy-plan ENVIRONMENT=staging` is offline and lists missing owner inputs.
+Start with `make init ENVIRONMENT=staging`: it installs local installer dependencies,
+creates private environment directories and prints the remaining prerequisites.
+It preserves existing inputs and does not generate trusted keys, licenses, legal
+terms or cluster changes. Supply public SMTP/S3 settings explicitly; credentials
+remain in OpenBao. Binary deployment and backup tools use the same verified
+installer, without a source checkout. Backup configuration defaults to the selected
+environment's private directory.
 Supply real public configuration, approved legal documents, licensing, operators,
 DNS/TLS, OpenBao, a signed backend release and environment-specific private files.
 Configure separate values/installations for staging and production. Targets use

@@ -1,7 +1,8 @@
 VENTIC = $(shell python3 scripts/sources.py backend)
 BINARY_VENTIC = $(shell python3 scripts/binary-release.py path)
-PYTHON ?= $(VENTIC)/.venv/bin/python
+PYTHON ?= .venv/bin/python
 ENVIRONMENT ?= staging
+export VENTIC_ENVIRONMENT := $(ENVIRONMENT)
 FRONTEND ?= portal
 BACKEND ?= none
 DEV_PORT ?= 5175
@@ -10,11 +11,17 @@ SANDBOX_PROFILE := $(CURDIR)/config/sandbox.yaml
 
 .PHONY: help sources-fetch stack-check test deploy-plan deploy-release deploy-verify version version-set setup sandbox-up sandbox-status sandbox-verify sandbox-down sandbox-destroy sandbox-sync sandbox-reset sandbox-dev sandbox-backend sandbox-trust
 help:
+	@printf '%s\n' 'make init ENVIRONMENT=staging  # local dependencies/private workspace; no cluster changes'
 	@printf '%s\n' 'Binary installation: python3 -m pip install -r requirements-installer.txt; make release-fetch | release-check | deploy-plan | deploy-release'
 	@printf '%s\n' 'make backup-init | backup-full | backup-incremental | backup-list | backup-verify | restore-plan [ARGS=--include-s3]'
 	@printf '%s\n' 'make sources-fetch | stack-check | test' 'make deploy-plan ENVIRONMENT=staging' 'make deploy-release ENVIRONMENT=staging (signed, licensed release)' 'make version | version-set VERSION=MAJOR.MINOR.PATCH' 'make sandbox-up | sandbox-dev | sandbox-down'
 sources-fetch:
 	python3 scripts/sources.py fetch
+.PHONY: init
+init:
+	@test -x .venv/bin/python || python3 -m venv .venv
+	.venv/bin/python -m pip install --disable-pip-version-check -r requirements-installer.txt
+	.venv/bin/python scripts/initialize.py --environment "$(ENVIRONMENT)"
 .PHONY: release-fetch release-check
 release-fetch:
 	python3 scripts/binary-release.py fetch
@@ -40,7 +47,7 @@ sandbox-up sandbox-status sandbox-verify sandbox-down sandbox-destroy sandbox-sy
 	$(MAKE) -C "$(VENTIC)" $@ SANDBOX_PROFILE="$(SANDBOX_PROFILE)" FRONTEND="$(FRONTEND)" BACKEND="$(BACKEND)" DEV_PORT="$(DEV_PORT)" COMPONENTS="$(COMPONENTS)" CONFIRM="$(CONFIRM)" ARGS="$(ARGS)"
 
 # Private recovery material stays in this checkout, outside Git and release artifacts.
-BACKUP_CONFIG ?= $(CURDIR)/private/backup.json
+BACKUP_CONFIG ?= $(shell $(PYTHON) scripts/deploy.py private-directory --environment "$(ENVIRONMENT)")/backup.json
 .PHONY: backup-init backup-full backup-incremental backup-list backup-verify restore-plan
 backup-init:
 	$(PYTHON) scripts/backup.py init --config "$(BACKUP_CONFIG)" $(ARGS)
