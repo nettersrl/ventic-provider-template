@@ -1,4 +1,6 @@
 VENTIC = $(shell python3 scripts/sources.py backend)
+VENTIC_FRONTEND_DIR ?= $(shell python3 scripts/sources.py frontend)
+export VENTIC_FRONTEND_DIR
 BINARY_VENTIC = $(shell python3 scripts/binary-release.py path)
 PYTHON ?= .venv/bin/python
 ENVIRONMENT ?= staging

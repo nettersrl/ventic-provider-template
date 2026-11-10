@@ -18,6 +18,15 @@ import initialize
 
 
 class ProviderTests(unittest.TestCase):
+    def test_make_exports_the_locked_frontend_and_keeps_explicit_overrides(self):
+        env=dict(os.environ);env.pop('VENTIC_FRONTEND_DIR',None)
+        command=['make','--no-print-directory','-s','--eval',
+                 'print-locked-frontend:\n\t@printenv VENTIC_FRONTEND_DIR','print-locked-frontend']
+        expected=(ROOT/json.loads((ROOT/'stack.lock.json').read_text())['sources']['frontend']['path']).resolve()
+        self.assertEqual(subprocess.check_output(command,cwd=ROOT,env=env,text=True).strip(),str(expected))
+        env['VENTIC_FRONTEND_DIR']='/explicit/synthetic/frontend'
+        self.assertEqual(subprocess.check_output(command,cwd=ROOT,env=env,text=True).strip(),env['VENTIC_FRONTEND_DIR'])
+
     def test_domain_override_ignores_unused_template_hosts_in_offline_plan(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)
