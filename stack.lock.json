@@ -5,7 +5,7 @@
       "repository": "https://gitlab.com/nettersrl/ventic/ventic-backend.git",
       "path": ".build/sources/backend",
       "version": "0.1.0",
-      "commit": "d600e094671769201f24f0f7533abebf79c5532c"
+      "commit": "c8ac9ef60507cc43ed8dcae74d3a375966904f04"
     },
     "frontend": {
       "repository": "https://gitlab.com/nettersrl/ventic/ventic-frontend.git",
