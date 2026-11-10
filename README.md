@@ -44,7 +44,7 @@ snapshot o backup. Impostare `VERSION` tramite
 `make version-set VERSION=0.1.0`; per gli aggiornamenti incrementare SemVer.
 I backend/frontend possono avere versioni diverse: il lock descrive la combinazione.
 
-Lo stack fissa backend `0.1.0`, frontend `1.1.3` e common `1.0.0`.
+Lo stack fissa backend `0.1.0`, frontend `1.1.4` e common `1.0.0`.
 I commit completi, i checksum del bundle frontend e il suo URL immutabile sono
 in `stack.lock.json`. I consumer puntano al common pubblicato; il bundle identifica
 il commit frontend pulito. La CI frontend pubblica il pacchetto dipendenza dopo
